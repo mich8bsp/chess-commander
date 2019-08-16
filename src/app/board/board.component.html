@@ -1,0 +1,7 @@
+<table background = '/assets/board.png'>
+  <tr *ngFor="let row of this.board">
+    <td *ngFor="let col of row">
+      <app-board-cell [cell]="col"></app-board-cell>
+    </td>
+  </tr>
+</table>
