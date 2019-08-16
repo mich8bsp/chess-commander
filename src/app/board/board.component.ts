@@ -14,7 +14,7 @@ export class BoardComponent implements OnInit {
   private ROWS = 8;
   private COLS = 8;
 
-  private board: BoardCell[][];
+  board: BoardCell[][];
 
   constructor() {
   }
