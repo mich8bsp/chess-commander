@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BoardCell} from '../shared/board-cell.model';
+import {Board} from '../shared/board.model';
 
 @Component({
   selector: 'app-board-cell',
@@ -8,7 +8,9 @@ import {BoardCell} from '../shared/board-cell.model';
 })
 export class BoardCellComponent implements OnInit {
 
-  @Input() cell: BoardCell;
+  @Input() board: Board;
+  @Input() row: number;
+  @Input() col: number;
 
   constructor() {
   }
@@ -16,4 +18,9 @@ export class BoardCellComponent implements OnInit {
   ngOnInit() {
   }
 
+  getPiece() {
+    if (this.board && this.board.getPieceAt(this.row, this.col)) {
+      return this.board.getPieceAt(this.row, this.col).occupyingPiece;
+    }
+  }
 }

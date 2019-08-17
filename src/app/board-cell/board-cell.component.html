@@ -1,4 +1,4 @@
-<img *ngIf="this.cell.occupyingPiece" src="./assets/{{this.cell.occupyingPiece.getPieceName()}}.png">
-<div *ngIf="!this.cell.occupyingPiece" ngClass="emptyCell">
+<img *ngIf="getPiece()" src="./assets/{{getPiece().getPieceName()}}.png">
+<div *ngIf="!getPiece()" ngClass="emptyCell">
 
 </div>
