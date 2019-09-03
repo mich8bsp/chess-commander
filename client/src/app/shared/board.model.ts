@@ -17,13 +17,31 @@ export class Board {
   setEmptyCell(row: number, col: number) {
     this.boardPieces.set(Board.boardMapKey(row, col), new BoardPiece(row, col));
   }
+
+  updateWithMove(moves: PieceMove[]) {
+    const boardCpy = new Board();
+    boardCpy.boardPieces = new Map(this.boardPieces);
+    moves.forEach(move => {
+      boardCpy.setPieceAt(move.dest.row, move.dest.col, move.source.occupyingPiece);
+      boardCpy.setEmptyCell(move.source.row, move.source.col);
+    });
+    return boardCpy;
+  }
+
+  changeSelection(row: number, col: number, isSelected: boolean) {
+    const boardCpy = new Board();
+    boardCpy.boardPieces = new Map(this.boardPieces);
+    boardCpy.getPieceAt(row, col).isSelected = isSelected;
+    return boardCpy;
+  }
 }
 
 export class BoardPiece {
 
   constructor(public row: number,
               public col: number,
-              public occupyingPiece?: Piece) {
+              public occupyingPiece?: Piece,
+              public isSelected: boolean = false) {
 
 
   }

@@ -1,16 +1,21 @@
-import * as fromAction from './../actions/board.action';
-import {Board, BoardPiece, Piece, PieceColor, PieceKind} from '../../shared/board.model';
+import { Store, StoreConfig } from '@datorama/akita';
+import {Board, BoardPiece, Piece, PieceColor, PieceKind} from '../shared/board.model';
 
 const ROWS = 8;
 const COLS = 8;
 
-export interface BoardState {
-  board: Board;
+
+export interface GameState {
+    board: Board;
+    lastSelected?: BoardPiece;
 }
 
-const initialState: BoardState = {
-  board: initializeBoard()
-};
+export function createInitialState(): GameState {
+  return {
+    board: initializeBoard()
+  };
+}
+
 
 function initializeBoard() {
   console.log('initializing board');
@@ -53,22 +58,10 @@ function initializeBoard() {
   return newBoard;
 }
 
-
-export function reducer(
-  state = initialState,
-  action: fromAction.BoardAction
-): BoardState {
-  switch (action.type) {
-    case fromAction.MAKE_MOVE_SUCCESS: {
-      return state;
-    }
-    case fromAction.MAKE_MOVE:
-    case fromAction.MAKE_MOVE_FAIL: {
-      return state;
-    }
+@StoreConfig({ name: 'game' })
+export class GameStore extends Store<GameState> {
+  constructor() {
+    super(createInitialState());
   }
 
-  return state;
 }
-
-export const getBoardFromState = (state: BoardState) => state.board;

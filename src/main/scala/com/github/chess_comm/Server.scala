@@ -10,6 +10,7 @@ import com.twitter.finatra.http.{Controller, HttpServer}
 import com.twitter.finatra.logging.filter.{LoggingMDCFilter, TraceIdMDCFilter}
 
 class Server extends HttpServer{
+  override def defaultFinatraHttpPort = ":9921"
 
   override protected def configureHttp(router: HttpRouter): Unit = {
     router

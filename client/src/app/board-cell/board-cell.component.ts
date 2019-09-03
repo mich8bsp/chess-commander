@@ -23,4 +23,8 @@ export class BoardCellComponent implements OnInit {
       return this.board.getPieceAt(this.row, this.col).occupyingPiece;
     }
   }
+
+  isSelected() {
+    return this.board && this.board.getPieceAt(this.row, this.col) && this.board.getPieceAt(this.row, this.col).isSelected;
+  }
 }

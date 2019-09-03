@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Board, PieceColor} from '../shared/board.model';
-import {select, Store} from '@ngrx/store';
-import * as fromStore from './../store';
 import {Observable} from 'rxjs';
+import {GameStore} from '../store/game.store';
+import {GameQuery} from '../store/game.query';
+import {GameService} from '../store/game.service';
 
 @Component({
   selector: 'app-board',
@@ -19,28 +20,22 @@ export class BoardComponent implements OnInit {
   rowsRange: Array<number> = Array.from(Array(8).keys());
   colsRange: Array<number> = Array.from(Array(8).keys());
 
-  constructor(private store: Store<fromStore.ChessCommanderStore>) {
+  constructor(private gameQuery: GameQuery,
+              private gameStore: GameStore,
+              private gameService: GameService) {
   }
 
   ngOnInit() {
     this.opponentColor = (this.playerColor === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-    this.board$ = this.store.pipe(select(fromStore.getBoard));
+    this.board$ = this.gameQuery.board$;
 
 
     this.board$.subscribe(v => console.log('tra', v));
   }
 
-  // getCell(row: number, col: number): Observable<BoardPiece> {
-  //   console.log('fetching cell (' + row + ', ' + col + ') ');
-  //   return this.board$.pipe(
-  //     map(
-  //       v => {
-  //         console.log('fetching cell (' + row + ', ' + col + ') with board ', v);
-  //         const key = '' + row + ',' + col;
-  //         return v.get(key);
-  //       }
-  //     )
-  //   );
-  // }
+  selectCell(row: number, col: number){
+    console.log("clicked on " + row  + ", " + col);
 
+    this.gameService.selectCell(row, col);
+  }
 }

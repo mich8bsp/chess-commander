@@ -124,6 +124,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "chess-commander"
+    }
+  },
+  "defaultProject": "chess-commander",
+  "cli": {
+    "defaultCollection": "@datorama/akita"
+  }
 }
