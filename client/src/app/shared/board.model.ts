@@ -31,7 +31,7 @@ export class Board {
   changeSelection(row: number, col: number, isSelected: boolean) {
     const boardCpy = new Board();
     boardCpy.boardPieces = new Map(this.boardPieces);
-    boardCpy.getPieceAt(row, col).isSelected = isSelected;
+    boardCpy.boardPieces.set(Board.boardMapKey(row, col), new BoardPiece(row, col, this.getPieceAt(row, col).occupyingPiece, isSelected));
     return boardCpy;
   }
 }

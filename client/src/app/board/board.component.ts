@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Board, PieceColor} from '../shared/board.model';
-import {Observable} from 'rxjs';
+import {Board, BoardPiece, PieceColor} from '../shared/board.model';
 import {GameStore} from '../store/game.store';
 import {GameQuery} from '../store/game.query';
 import {GameService} from '../store/game.service';
@@ -15,7 +14,8 @@ export class BoardComponent implements OnInit {
   private playerColor: PieceColor = PieceColor.WHITE;
   private opponentColor: PieceColor;
 
-  public board$: Observable<Board>;
+  public board: Board;
+  public lastSelected?: BoardPiece;
 
   rowsRange: Array<number> = Array.from(Array(8).keys());
   colsRange: Array<number> = Array.from(Array(8).keys());
@@ -27,15 +27,21 @@ export class BoardComponent implements OnInit {
 
   ngOnInit() {
     this.opponentColor = (this.playerColor === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-    this.board$ = this.gameQuery.board$;
 
+    this.gameQuery.lastSelected$.subscribe(v => {
+      console.log('updated last selected to', v)
+      this.lastSelected = v;
+    });
 
-    this.board$.subscribe(v => console.log('tra', v));
+    this.gameQuery.board$.subscribe(v => {
+      console.log('updated board to', v);
+      this.board = v;
+    });
   }
 
   selectCell(row: number, col: number){
     console.log("clicked on " + row  + ", " + col);
 
-    this.gameService.selectCell(row, col);
+    this.gameService.selectCell(row, col, this.board, this.lastSelected);
   }
 }

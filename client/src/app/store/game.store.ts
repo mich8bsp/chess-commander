@@ -1,5 +1,6 @@
 import { Store, StoreConfig } from '@datorama/akita';
 import {Board, BoardPiece, Piece, PieceColor, PieceKind} from '../shared/board.model';
+import {Injectable} from '@angular/core';
 
 const ROWS = 8;
 const COLS = 8;
@@ -58,6 +59,7 @@ function initializeBoard() {
   return newBoard;
 }
 
+@Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'game' })
 export class GameStore extends Store<GameState> {
   constructor() {

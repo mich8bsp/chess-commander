@@ -1,10 +1,11 @@
 import {GameStore} from './game.store';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
-import {PieceMove} from '../shared/board.model';
+import {Board, BoardPiece, PieceMove} from '../shared/board.model';
 import {GameQuery} from './game.query';
-import {combineLatest, merge} from 'rxjs';
+import {Injectable} from '@angular/core';
 
+@Injectable({providedIn: 'root'})
 export class GameService {
 
   constructor(private store: GameStore,
@@ -13,44 +14,49 @@ export class GameService {
   }
 
   makeMove(move) {
-    return this.http.post('http://localhost:9921/make-move/', move).pipe(tap((makeMoveRes: MakeMoveResponse) => {
-      if (makeMoveRes.isSuccess) {
-        this.store.update(state => {
-          return {
-            board: state.board.updateWithMove(makeMoveRes.move),
-            lastSelected: undefined
-          };
-        });
-      }
-    }));
+    return this.http.post<MakeMoveResponse>('http://localhost:9921/make-move/', move)
+      .subscribe((makeMoveRes: MakeMoveResponse) => {
+        console.log('got make move result ', makeMoveRes);
+        if (makeMoveRes.isSuccess) {
+          this.store.update(state => {
+            return {
+              board: state.board.updateWithMove(makeMoveRes.move),
+              lastSelected: undefined
+            };
+          });
+        }
+      });
   }
 
-  selectCell(row: number, col: number) {
-    return combineLatest(
-      this.query.lastSelected$,
-      this.query.board$
-    ).pipe(tap(([lastSelected, board]) => {
-      const currSelected = board.getPieceAt(row, col);
-      if (!lastSelected) {
-        if (currSelected.occupyingPiece) {
-          this.store.update({
-              lastSelected: currSelected,
-              board: board.changeSelection(row, col, true)
-            }
-          );
-        }
-      } else if (currSelected.row == lastSelected.row && currSelected.col == lastSelected.col) {
+  selectCell(row: number, col: number, board: Board, lastSelected?: BoardPiece) {
+    console.log('select cell called');
+    console.log('last selected is', lastSelected);
+    console.log('board is ', board);
+    const currSelected = board.getPieceAt(row, col);
+    console.log('current selected', currSelected);
+    if (!lastSelected) {
+      if (currSelected.occupyingPiece) {
+        console.log('selecting piece at', currSelected);
+        const boardAfterSelection = board.changeSelection(row, col, true);
         this.store.update({
-          lastSelected: undefined,
-          board: board.changeSelection(row, col, false)
-        });
-      } else {
-        this.makeMove(new PieceMove(
-          lastSelected,
-          currSelected
-        ));
+            lastSelected: board.getPieceAt(row, col),
+            board: boardAfterSelection
+          }
+        );
       }
-    }));
+    } else if (currSelected.row == lastSelected.row && currSelected.col == lastSelected.col) {
+      console.log('deselecting piece at', currSelected);
+      this.store.update({
+        lastSelected: undefined,
+        board: board.changeSelection(row, col, false)
+      });
+    } else {
+      console.log('making move from ', lastSelected, currSelected);
+      this.makeMove(new PieceMove(
+        lastSelected,
+        currSelected
+      ));
+    }
   }
 }
 
